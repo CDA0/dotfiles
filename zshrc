@@ -74,9 +74,11 @@ antigen apply
 alias ls="ls -G" # list
 alias la="ls -Ga" # list all, includes dot files
 alias ll="ls -Gl" # long list, excludes dot files
+alias llh="ls -Glh" # long list, preety print size
 alias lla="ls -Gla" # long list all, includes dot files
 
+# alias vim="nvim"    # make vim nvim
 alias rla="source ~/.zshrc"
 
 alias genssh="ssh-keygen -o -a 100 -t ed25519"
-
+alias mux="tmuxinator"
