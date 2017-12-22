@@ -1,3 +1,4 @@
+zmodload zsh/zprof
 #
 # Global Config
 #
@@ -11,6 +12,8 @@ alias sudo='sudo '
 export LANG=en_GB.UTF-8
 export LANGUAGE=en_GB.UTF-8
 export LC_ALL=en_GB.UTF-8
+
+export ZSH_CACHE_DIR=$HOME/.zsh
 
 # Ensure editor is set
 export EDITOR=nvim
@@ -39,13 +42,8 @@ if [[ -f ~/.zsh-local ]]; then
   source ~/.zsh-local
 fi
 
-# Use zsh-completions if it exists
-if [[ -d "/usr/local/share/zsh-completions" ]]; then
-    fpath=(/usr/local/share/zsh-completions $fpath)
-fi
-
 # Load Antigen
-source ~/.antigen.zsh
+source ~/antigen.zsh
 
 #
 # oh-my-zsh library
@@ -57,29 +55,30 @@ antigen use oh-my-zsh
 # Bundles from the default repo (robbyrussel/oh-my-zsh)
 #
 
-export KEYTIMEOUT=1
-antigen bundle robbyrussell/oh-my-zsh plugins/vi-mode
+# antigen bundle robbyrussell/oh-my-zsh plugins/vi-mode
 antigen bundle robbyrussell/oh-my-zsh plugins/git
 antigen bundle robbyrussell/oh-my-zsh plugins/npm
-antigen bundle robbyrussell/oh-my-zsh plugins/command-not-found
+# antigen bundle robbyrussell/oh-my-zsh plugins/command-not-found
 
 #
 # Antigen Bundles
 #
 
-# antigen bundle zsh-users/zsh-syntax-highlighting
-# antigen bundle zsh-users/zsh-completions src
-export NVM_AUTO_USE=true
-export NVM_NO_USE=true
-antigen bundle lukechilds/zsh-nvm
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-completions
+# export NVM_AUTO_USE=true
+# export NVM_NO_USE=true
+# export NVM_LAZY_LOAD=true
+# antigen bundle lukechilds/zsh-nvm
 # antigen bundle cswl/zsh-rbenv
 
 #
 # Antigen theme
 #
 
-antigen theme bhilburn/powerlevel9k powerlevel9k
+# antigen theme bhilburn/powerlevel9k powerlevel9k
 # antigen theme robbyrussell/oh-my-zsh themes/flazz
+antigen theme robbyrussell/oh-my-zsh themes/gentoo
 # antigen theme https://github.com/denysdovhan/spaceship-zsh-theme spaceship
 
 antigen apply
@@ -99,7 +98,7 @@ alias lla="ls -Gla" # long list all, includes dot files
 alias rla="source ~/.zshrc"
 alias ezr="$EDITOR ~/.zshrc"
 
-alias antup="curl -L git.io/antigen > ~/.antigen.zsh"
+alias antup="curl -L git.io/antigen > ~/antigen.zsh"
 
 alias genssh="ssh-keygen -o -a 100 -t ed25519"
 
@@ -109,3 +108,5 @@ alias docker-rm='docker rm $(docker ps -a -q)'
 alias docker-rmi='docker rmi $(docker images -q)'
 alias docker-rmv='docker volume ls -qf dangling=true | xargs -r docker volume rm'
 alias dockers='docker ps --format "table {{.Names}}\\t{{.Image}}\\t{{.Status}}\\t{{.Ports}}\\t{{.Command}}"'
+
+export N_PREFIX="$HOME/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"  # Added by n-install (see http://git.io/n-install-repo).

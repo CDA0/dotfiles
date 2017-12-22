@@ -1,14 +1,23 @@
 " Automatically install vim-plug and run PlugInstall if vim-plug not found
 " see https://github.com/junegunn/vim-plug/wiki/faq#automatic-installation
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+if has('nvim')
+  if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+else
+  if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
 endif
 
-call plug#begin('~/.vim/plugged')
 if has('nvim')
 	call plug#begin('~/.config/nvim/plugged')
+else
+  call plug#begin('~/.vim/plugged')
 endif
 
 " colourschemes
@@ -35,24 +44,24 @@ Plug 'SirVer/ultisnips'
 Plug 'w0rp/ale'
 Plug 'jaawerth/nrun.vim'
 Plug 'moll/vim-bbye'
+Plug 'roxma/nvim-completion-manager'
+Plug 'roxma/python-support.nvim'
+" Plug 'roxma/nvim-cm-tern', {'do': 'npm install'}
 " Plug 'vim-scripts/Decho'
+Plug 'tpope/vim-fugitive'
+Plug 'mhinz/vim-grepper'
 
 " Langs
 Plug 'pangloss/vim-javascript'
 Plug 'modille/groovy.vim'
 Plug 'mustache/vim-mustache-handlebars'
+Plug 'mxw/vim-jsx'
 
 if has('nvim')
   " Neovim only plugs
-  " Plug 'benekastah/neomake'
-  " Plug 'jaawerth/neomake-local-eslint-first'
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 else
   " Vim only plugs
-  " Plug 'mtscout6/syntastic-local-eslint.vim'
-  " Plug 'vim-syntastic/syntastic'
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --tern-completer' }
-  Plug 'ternjs/tern'
+  Plug 'roxma/vim-hug-neovim-rpc'
 endif
 
 call plug#end()
@@ -84,15 +93,19 @@ set incsearch
 " highlight search results
 set hlsearch
 
-" set neovim directories
+" set swap and undo directories
 if has('nvim')
   set backupdir=~/.config/nvim/backup
   set directory=~/.config/nvim/backup
   set undodir=~/.config/nvim/undodir
-  set undofile
-  set undolevels=100
-  set undoreload=1000
+else
+  set backupdir=~/.vim/backup
+  set directory=~/.vim/swap
+  set undodir=~/.vim/undo
 endif
+set undofile
+set undolevels=100
+set undoreload=1000
 
 " always show current position
 set ruler
@@ -101,7 +114,7 @@ set ruler
 set cursorline
 
 " do not wrap lines
-set nowrap
+" set nowrap
 
 " set a marker at column number
 set colorcolumn=100
@@ -117,6 +130,9 @@ set lazyredraw
 
 " show command in last line of the screen
 set showcmd
+
+" make backspace behave properly
+set backspace=indent,eol,start
 
 if has('mouse')
   set mouse=a
@@ -150,13 +166,17 @@ vnoremap <Leader>P "+P
 map <Leader>sv :source $MYVIMRC<Cr>
 map <Leader>ev :e $MYVIMRC<Cr>
 map <Leader>ez :e ~/.zshrc<Cr>
+map <Leader>eb :e ~/.bashrc<Cr>
 map <Leader>et :e ~/.tmux.conf<Cr>
 
 " quick turn off search highlight
 map <Leader>h :nohl<Cr>
 
 " quick search wuth ack / silver searcher
-map <Leader>f :Ack
+map <Leader>f :Ack 
+
+nnoremap <Leader>g :Grepper -tool git<cr>
+nnoremap <Leader>G :Grepper -tool rg<cr>
 
 " single insert/append char
 nnoremap <Leader><Leader>i i_<Esc>r
@@ -164,25 +184,6 @@ nnoremap <Leader><Leader>a a_<Esc>r
 
 " select chars inserted last time in insert mode
 nnoremap gV `[v`]
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Movement
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" map ctrl+{h,j,k,l} to moving between splits
-" noremap <c-l> <c-w>l
-" noremap <c-k> <c-w>k
-" noremap <c-j> <c-w>j
-" noremap <c-h> <c-w>h
-
-" nvim termal move splits
-" if has('nvim')
-  " tnoremap <C-h> <C-\><c-n><c-w>h
-  " tnoremap <C-j> <C-\><C-n><C-w>j
-  " tnoremap <C-k> <C-\><C-n><C-w>k
-  " tnoremap <C-l> <C-\><C-n><C-w>l
-  " " start insert mode when switching to a terminal
-  " autocmd BufWinEnter,WinEnter term://* startinsert
-" endif
 
 " disable arrow keys in normal mode
 noremap <Up> <NOP>
@@ -197,12 +198,14 @@ noremap <Right> <NOP>
 au FocusLost * :wa
 au BufLeave * :wa
 
+" vim-airline/vimairline
+let g:airline#extensions#tabline#enabled = 1
+
 " CtrlP
 let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
 let g:ctrlp_custom_ignore = '\v[\/](node_modules|bower_components|target|dist|compiled|lib)|(\.(swp|ico|git|svn))$'
 let g:ctrlp_working_path_mode = 'a'
-
 
 " ALE
 let g:ale_sign_error = '✗'
@@ -210,6 +213,10 @@ let g:ale_sign_warning = '⚠'
 let g:ale_linters = {
 \   'javascript': ['standard'],
 \}
+let g:ale_fixers = {
+\   'javascript': ['standard'],
+\}
+let g:ale_fix_on_save = 1
 au BufRead,BufEnter *.js let b:ale_javascript_standard_executable = nrun#Which('semistandard')
 
 " NERDcommenter
@@ -220,26 +227,30 @@ map <C-e> :NERDTreeToggle<Cr>
 let NERDTreeIgnore = ['node_modules', 'logs', '\.log$']
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
-"
-
 " supertab
-let g:SuperTabDefaultCompletionType = "<c-n>"
+let g:SuperTabDefaultCompletionType = "<C-n>"
 
 " bbye
 map <Leader>d :Bdelete<Cr>
+
+" vim-jsx
+let g:jsx_ext_required = 0
 
 " ack.vim
 if executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
 
+" python-support
+let g:python_support_python2_require = 0
+
 " Toggle relative numbers
-map <c-n> :call ToggleNumber()<Cr>
-function! ToggleNumber()
-  if(&relativenumber == 1)
-    set norelativenumber
-    set number
-  else
-    set relativenumber
-  endif
-endfunc
+" map <c-n> :call ToggleNumber()<Cr>
+" function! ToggleNumber()
+  " if(&relativenumber == 1)
+    " set norelativenumber
+    " set number
+  " else
+    " set relativenumber
+  " endif
+" endfunc

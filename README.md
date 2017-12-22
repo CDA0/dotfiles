@@ -12,3 +12,4 @@ cd fonts
 cd ..
 rm -rf fonts
 ln -nfs /Users/craig/.dotfiles/tmuxline.conf /Users/craig/.tmuxline.conf
+git clone https://github.com/tmux-plugins/tpm /Users/craig/.tmux/plugins/tpm
