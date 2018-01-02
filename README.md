@@ -19,5 +19,5 @@ rm -rf fonts
 
 # Tmux plugins
 ```
-git clone https://github.com/tmux-plugins/tpm /Users/craig/.tmux/plugins/tpm
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 ```
