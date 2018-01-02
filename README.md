@@ -5,7 +5,7 @@ ln -nfs ~/.dotfiles/zshrc ~/.zshrc
 ln -nfs ~/.dotfiles/tmux.conf ~/.tmux.conf
 ln -nfs ~/.dotfiles/vimrc ~/.vimrc
 ln -nfs ~/.vimrc ~/.config/nvim/init.vim
-ln -nfs /Users/craig/.dotfiles/tmuxline.conf /Users/craig/.tmuxline.conf
+ln -nfs ~/.dotfiles/tmuxline.conf ~/.tmuxline.conf
 ```
 
 # Fonts
